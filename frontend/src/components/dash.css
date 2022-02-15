@@ -1,0 +1,32 @@
+.main-dash{
+    margin-top: 3%;
+}
+.heading{
+    text-align: center;
+    font-style: italic;
+    font-size: xx-large;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: blue;
+}
+.dash-h5{
+    margin-top: 5%;
+    color: silver;
+}
+.dash-left{
+    margin-top: 3%;
+}
+.btn-create-cv{
+    margin-top: 5%;
+    border-radius: 20px;
+    height: 100px;
+    width: 300px;
+    font-size: larger;
+}
+.btn-create-cv:hover{
+    cursor: pointer;
+}
+.edit_del_btn{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}

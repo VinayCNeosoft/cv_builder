@@ -1,0 +1,75 @@
+.editor_row_section{
+    padding: 0%;
+    margin-top: 2%;
+    margin-bottom: 2%;
+    margin-left: 1%;
+    margin-right: 1%;
+}
+.editor_col_section{
+    padding: 0%;
+}
+.basic_form{
+    margin-top: 5%;
+    margin-bottom: 5%;
+}
+.prev_nxt_btn{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.bio{
+    margin-top: 5px;
+    text-align: justify;
+}
+.cv-view-col{
+    margin-top: 1%;
+}
+/* .cv_View{
+    cursor: pointer;
+    height: auto;
+    width: auto;
+    padding: 2%;
+    border: 1px solid black;
+} */
+.pro_pic{
+    height: 100px;
+    width: 100px;
+    border-radius: 30px;
+    border: 1px solid lightcyan;
+    margin-top: 5px;
+}
+.left-col{
+    background-color:darkblue;
+    flex-grow: 1;
+}
+.right-col{
+    background-color: darksalmon;
+}
+.pro-contact{
+    color:azure;
+    background-color: black;
+}
+.pro-heading{
+    color: azure;
+}
+.pro-skills{
+    color:azure;
+    background-color: black;
+}
+.model_pointer{
+    cursor: pointer;
+    font-size: medium;
+}
+.skill_list{
+    display: inline-block;
+}
+progress{
+    background-color:pink;
+    border-radius: 4px;
+    position: absolute;
+    box-shadow: 0 3px 6px rgba(255, 255, 0, 255) inset;
+}
+.w-wrap{
+    word-break: break-all;
+}
