@@ -487,7 +487,7 @@ router.get("/getCustomerProfile/:uid", authenticateToken, (req, res) => {
 });
 
 //create order or add order
-router.post("/addDataToPdf/:uid", async (req, res) => {
+router.post("/addDataToPdf/:uid", authenticateToken, async (req, res) => {
   let u = Math.random();
   let d = Date.now();
   console.log(req.params.uid);
@@ -549,7 +549,7 @@ router.post("/addDataToPdf/:uid", async (req, res) => {
 });
 
 //fetch all PDF Created by user
-router.get("/getPdfDetails/:uid", (req, res) => {
+router.get("/getPdfDetails/:uid", authenticateToken, (req, res) => {
   console.log(req.params.uid);
   console.log(`Fetching PDF Data for ${req.params.uid} ...`);
   pdfModel.findOne({ email: req.params.uid }, function (err, pdfData) {

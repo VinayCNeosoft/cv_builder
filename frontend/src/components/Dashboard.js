@@ -55,6 +55,7 @@ function Dashboard() {
               </div>
             </Col>
           </Row>
+          <hr />
         </Container>
       </Container>
       <EditCv />

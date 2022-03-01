@@ -1,7 +1,6 @@
 import axios from "axios";
 import { MAIN_URL } from "./Url";
 
-let token = localStorage.getItem("token");
 let email = localStorage.getItem("email");
 
 //register user
@@ -43,6 +42,7 @@ export function resetPassword(data) {
 //get customer info
 export function getCustomer(uid) {
   console.log(uid);
+  let token = localStorage.getItem("token");
   return axios.get(`${MAIN_URL}getCustomerProfile/${uid}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -50,21 +50,31 @@ export function getCustomer(uid) {
 
 //updateProfileImage
 export function updateProfileImage(formdata, config) {
+  let token = localStorage.getItem("token");
   console.log(formdata, config);
-  return axios.put(`${MAIN_URL}propic`, formdata, config);
+  return axios.put(`${MAIN_URL}propic`, formdata, config, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
 }
 //add order or place order
 export function addToPdfSchema(uid, data) {
-  console.log(uid);
-  console.log(data);
-  return axios.post(`${MAIN_URL}addDataToPdf/${uid}`, data);
+  let token = localStorage.getItem("token");
+  return axios.post(`${MAIN_URL}addDataToPdf/${uid}`, data, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
 }
 //fetch or get order details
 export function getAllPdf(uid) {
-  return axios.get(`${MAIN_URL}getPdfDetails/${uid}`);
+  let token = localStorage.getItem("token");
+  return axios.get(`${MAIN_URL}getPdfDetails/${uid}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
 }
 //edit CV
 export function editCV(data) {
+  let token = localStorage.getItem("token");
   console.log(data);
-  return axios.put(`${MAIN_URL}editCv`, data);
+  return axios.put(`${MAIN_URL}editCv`, data, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
 }

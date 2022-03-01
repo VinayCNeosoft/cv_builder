@@ -593,21 +593,33 @@ function EditCv() {
       percentage: data.percentage,
       id: data.id,
     };
-    setEducationDetail((educationDetail) => [...educationDetail, e]);
-    setEducationInfoValues({
-      ...educationInfoValues,
-      isEducationArrayEmpty: false,
-    });
-    degreeNameRef.current.value = "";
-    instituteNameRef.current.value = "";
-    percentageRef.current.value = "";
-    setEducationInfoValues({
-      ...educationInfoValues,
-      degree_name: "",
-      institute_name: "",
-      percentage: "",
-      id: "",
-    });
+    if (e.degree_name !== "" && e.institute_name !== "" && e.percentage !== "")
+      if (
+        educationInfoErrors.degree_name === "" &&
+        educationInfoErrors.institute_name === "" &&
+        educationInfoErrors.percentage === ""
+      ) {
+        setEducationDetail((educationDetail) => [...educationDetail, e]);
+        setEducationInfoValues({
+          ...educationInfoValues,
+          isEducationArrayEmpty: false,
+        });
+        degreeNameRef.current.value = "";
+        instituteNameRef.current.value = "";
+        percentageRef.current.value = "";
+        setEducationInfoValues({
+          ...educationInfoValues,
+          degree_name: "",
+          institute_name: "",
+          percentage: "",
+          id: "",
+        });
+      } else {
+        toast("Validation Error");
+      }
+    else {
+      toast("All Field should be filled");
+    }
   };
   //edit education data
   const handleEditEducation = (data) => {
@@ -622,28 +634,47 @@ function EditCv() {
       (element) => element.id === data.id
     );
     let updateEData = educationDetail;
-    updateEData[index] = data;
-    degreeNameRef.current.value = "";
-    instituteNameRef.current.value = "";
-    percentageRef.current.value = "";
-    setEducationInfoValues({
-      ...educationInfoValues,
-      degree_name: "",
-      institute_name: "",
-      percentage: "",
-      id: "",
-    });
-    setUpdateButton(false);
-
-    // let newEdu = educationInfoValues.educationDetail
+    if (
+      data.degree_name !== "" &&
+      data.institute_name !== "" &&
+      data.percentage !== ""
+    ) {
+      if (
+        educationInfoErrors.degree_name === "" &&
+        educationInfoErrors.institute_name === "" &&
+        educationInfoErrors.percentage === ""
+      ) {
+        updateEData[index] = data;
+        degreeNameRef.current.value = "";
+        instituteNameRef.current.value = "";
+        percentageRef.current.value = "";
+        setEducationInfoValues({
+          ...educationInfoValues,
+          degree_name: "",
+          institute_name: "",
+          percentage: "",
+          id: "",
+        });
+        setUpdateButton(false);
+      } else {
+        toast("Validation Error");
+      }
+    } else {
+      toast("All field required");
+    }
   };
   //delete education data
   const handleRemoveEducation = (index) => {
-    console.log("btn clicked", index);
-    const updateEducationDetail = educationDetail.filter(
-      (item) => item.id !== index
-    );
-    setEducationDetail(updateEducationDetail);
+    if (window.confirm("Are you sure you want to delete this entry ?")) {
+      console.log("btn clicked", index);
+      const updateEducationDetail = educationDetail.filter(
+        (item) => item.id !== index
+      );
+      setEducationDetail(updateEducationDetail);
+      toast("Entry Deleted");
+    } else {
+      toast("Operation Cancel");
+    }
   };
   //add experience data-------------------------------------------------------------------------------------------
   const addExperienceInfo = (data) => {
@@ -660,26 +691,48 @@ function EditCv() {
       id: data.id,
     };
     console.log(e);
-    setExperienceDetail((experienceDetail) => [...experienceDetail, e]);
-    setExperience({ ...experience, isExperienceArrayEmpty: false });
-    organizationNameRef.current.value = "";
-    joiningLocationRef.current.value = "";
-    positionRef.current.value = "";
-    ctcRef.current.value = "";
-    joiningDateRef.current.value = "";
-    leavingDateRef.current.value = "";
-    technologiesWorkedOnRef.current.value = "";
-    setExperience({
-      ...experience,
-      organizationName: "",
-      joiningLocation: "",
-      position: "",
-      ctc: "",
-      joiningDate: "",
-      leavingDate: "",
-      technologiesWorkedOn: "",
-      id: "",
-    });
+    if (
+      e.organizationName !== "" &&
+      e.joiningLocation !== "" &&
+      e.position !== "" &&
+      e.ctc !== "" &&
+      e.joiningDate !== "" &&
+      e.leavingDate !== "" &&
+      e.technologiesWorkedOn !== ""
+    )
+      if (
+        experienceError.organizationName === "" &&
+        experienceError.joiningLocation === "" &&
+        experienceError.position === "" &&
+        experienceError.ctc === "" &&
+        experienceError.technologiesWorkedOn === ""
+      ) {
+        setExperienceDetail((experienceDetail) => [...experienceDetail, e]);
+        setExperience({ ...experience, isExperienceArrayEmpty: false });
+        organizationNameRef.current.value = "";
+        joiningLocationRef.current.value = "";
+        positionRef.current.value = "";
+        ctcRef.current.value = "";
+        joiningDateRef.current.value = "";
+        leavingDateRef.current.value = "";
+        technologiesWorkedOnRef.current.value = "";
+        setExperience({
+          ...experience,
+          organizationName: "",
+          joiningLocation: "",
+          position: "",
+          ctc: "",
+          joiningDate: "",
+          leavingDate: "",
+          technologiesWorkedOn: "",
+          id: "",
+        });
+      } else {
+        toast("Validation Error");
+      }
+    else {
+      toast("All Field should be filled");
+    }
   };
   //edit experience data
   const handleEditExperience = (data) => {
@@ -694,34 +747,61 @@ function EditCv() {
       (element) => element.id === data.id
     );
     let updateEData = experienceDetail;
-    updateEData[index] = data;
-    organizationNameRef.current.value = "";
-    joiningLocationRef.current.value = "";
-    positionRef.current.value = "";
-    ctcRef.current.value = "";
-    joiningDateRef.current.value = "";
-    leavingDateRef.current.value = "";
-    technologiesWorkedOnRef.current.value = "";
-    setExperience({
-      ...experience,
-      organizationName: "",
-      joiningLocation: "",
-      position: "",
-      ctc: "",
-      joiningDate: "",
-      leavingDate: "",
-      technologiesWorkedOn: "",
-      id: "",
-    });
-    setUpdateButton(false);
+    if (
+      data.organizationName !== "" &&
+      data.joiningLocation !== "" &&
+      data.position !== "" &&
+      data.ctc !== "" &&
+      data.joiningDate !== "" &&
+      data.leavingDate !== "" &&
+      data.technologiesWorkedOn !== ""
+    )
+      if (
+        experienceError.organizationName === "" &&
+        experienceError.joiningLocation === "" &&
+        experienceError.position === "" &&
+        experienceError.ctc === "" &&
+        experienceError.technologiesWorkedOn === ""
+      ) {
+        updateEData[index] = data;
+        organizationNameRef.current.value = "";
+        joiningLocationRef.current.value = "";
+        positionRef.current.value = "";
+        ctcRef.current.value = "";
+        joiningDateRef.current.value = "";
+        leavingDateRef.current.value = "";
+        technologiesWorkedOnRef.current.value = "";
+        setExperience({
+          ...experience,
+          organizationName: "",
+          joiningLocation: "",
+          position: "",
+          ctc: "",
+          joiningDate: "",
+          leavingDate: "",
+          technologiesWorkedOn: "",
+          id: "",
+        });
+        setUpdateButton(false);
+      } else {
+        toast("Validation Error");
+      }
+    else {
+      toast("All field required");
+    }
   };
   //delete experience data
   const handleRemoveExperience = (index) => {
-    console.log("btn clicked", index);
-    const updateExperienceDetail = experienceDetail.filter(
-      (item) => item.id !== index
-    );
-    setExperienceDetail(updateExperienceDetail);
+    if (window.confirm("Are you sure you want to delete this entry ?")) {
+      console.log("btn clicked", index);
+      const updateExperienceDetail = experienceDetail.filter(
+        (item) => item.id !== index
+      );
+      setExperienceDetail(updateExperienceDetail);
+      toast("Entry Deleted");
+    } else {
+      toast("Operation Cancel");
+    }
   };
   //add projects data-------------------------------------------------------------------------------------------
   const addProjectsInfo = (data) => {
@@ -735,75 +815,125 @@ function EditCv() {
       descProj: data.descProj,
       id: data.id,
     };
-    console.log(e);
-    setProjectDetail((projectDetails) => [...projectDetails, e]);
-    setProject({ ...project, isProjectArrayEmpty: false });
-    projectTitleRef.current.value = "";
-    teamSizeRef.current.value = "";
-    durationRef.current.value = "";
-    techUsedRef.current.value = "";
-    descProjRef.current.value = "";
-    setProject({
-      ...project,
-      projectTitle: "",
-      teamSize: "",
-      duration: "",
-      techUsed: "",
-      descProj: "",
-      id: "",
-    });
+    if (
+      e.projectTitle !== "" &&
+      e.teamSize !== "" &&
+      e.duration !== "" &&
+      e.techUsed !== "" &&
+      e.descProj !== ""
+    )
+      if (
+        projectError.projectTitle === "" &&
+        projectError.teamSize === "" &&
+        projectError.duration === "" &&
+        projectError.techUsed === "" &&
+        projectError.descProj === ""
+      ) {
+        setProjectDetail((projectDetails) => [...projectDetails, e]);
+        setProject({ ...project, isProjectArrayEmpty: false });
+        projectTitleRef.current.value = "";
+        teamSizeRef.current.value = "";
+        durationRef.current.value = "";
+        techUsedRef.current.value = "";
+        descProjRef.current.value = "";
+        setProject({
+          ...project,
+          projectTitle: "",
+          teamSize: "",
+          duration: "",
+          techUsed: "",
+          descProj: "",
+          id: "",
+        });
+      } else {
+        toast("Validation Error");
+      }
+    else {
+      toast("All Field should be filled");
+    }
   };
-  //edit experience data
+  //edit projects data
   const handleEditProject = (data) => {
     console.log(data);
     setProject(data);
     setUpdateButton(true);
   };
-  //update experience data
+  //update projects data
   const updateProjectInfo = (data) => {
     console.log(data);
     const index = projectsDetail.findIndex((element) => element.id === data.id);
     let updatePData = projectsDetail;
-    updatePData[index] = data;
-    projectTitleRef.current.value = "";
-    teamSizeRef.current.value = "";
-    durationRef.current.value = "";
-    techUsedRef.current.value = "";
-    descProjRef.current.value = "";
-    setProject({
-      ...project,
-      projectTitle: "",
-      teamSize: "",
-      duration: "",
-      techUsed: "",
-      descProj: "",
-      id: "",
-    });
-    setUpdateButton(false);
+    if (
+      data.projectTitle !== "" &&
+      data.teamSize !== "" &&
+      data.duration !== "" &&
+      data.techUsed !== "" &&
+      data.descProj !== ""
+    )
+      if (
+        projectError.projectTitle === "" &&
+        projectError.teamSize === "" &&
+        projectError.duration === "" &&
+        projectError.techUsed === "" &&
+        projectError.descProj === ""
+      ) {
+        updatePData[index] = data;
+        projectTitleRef.current.value = "";
+        teamSizeRef.current.value = "";
+        durationRef.current.value = "";
+        techUsedRef.current.value = "";
+        descProjRef.current.value = "";
+        setProject({
+          ...project,
+          projectTitle: "",
+          teamSize: "",
+          duration: "",
+          techUsed: "",
+          descProj: "",
+          id: "",
+        });
+        setUpdateButton(false);
+      } else {
+        toast("Validation Error");
+      }
+    else {
+      toast("All Field should be filled");
+    }
   };
-  //delete experience data
+  //delete projects data
   const handleRemoveProject = (index) => {
-    console.log("btn clicked", index);
-    const updateProjectDetail = projectsDetail.filter(
-      (item) => item.id !== index
-    );
-    setProjectDetail(updateProjectDetail);
+    if (window.confirm("Are you sure you want to delete this entry ?")) {
+      console.log("btn clicked", index);
+      const updateProjectDetail = projectsDetail.filter(
+        (item) => item.id !== index
+      );
+      setProjectDetail(updateProjectDetail);
+      toast("Entry Deleted");
+    } else {
+      toast("Operation Cancel");
+    }
   };
   //add skill data-------------------------------------------------------------------------------------------
   const addSkillInfo = (data) => {
-    console.log(data);
     data.id = Math.random();
     let e = {
       skillName: data.skillName,
       perfection: data.perfection,
       id: data.id,
     };
-    console.log(e);
-    setSkillDetails((skillDetail) => [...skillDetail, e]);
-    setSkill({ ...skill, isSkillArrayEmpty: false });
-    skillNameRef.current.value = "";
-    perfectionRef.current.value = "";
-    setSkill({ ...skill, skillName: "", perfection: "", id: "" });
+    if (e.skillName !== "" && e.perfection !== "")
+      if (skillError.skillName === "" && skillError.perfection === "") {
+        setSkillDetails((skillDetail) => [...skillDetail, e]);
+        setSkill({ ...skill, isSkillArrayEmpty: false });
+        skillNameRef.current.value = "";
+        perfectionRef.current.value = "";
+        setSkill({ ...skill, skillName: "", perfection: "", id: "" });
+      } else {
+        toast("Validation Error");
+      }
+    else {
+      toast("All Field should be filled");
+    }
   };
   //edit skill data
   const handleEditSkill = (data) => {
@@ -816,17 +946,30 @@ function EditCv() {
     console.log(data);
     const index = skillDetail.findIndex((element) => element.id === data.id);
     let updateSData = skillDetail;
-    updateSData[index] = data;
-    skillNameRef.current.value = "";
-    perfectionRef.current.value = "";
-    setSkill({ ...skill, skillName: "", perfection: "", id: "" });
-    setUpdateButton(false);
+    if (data.skillName !== "" && data.perfection !== "")
+      if (skillError.skillName === "" && skillError.perfection === "") {
+        updateSData[index] = data;
+        skillNameRef.current.value = "";
+        perfectionRef.current.value = "";
+        setSkill({ ...skill, skillName: "", perfection: "", id: "" });
+        setUpdateButton(false);
+      } else {
+        toast("Validation Error");
+      }
+    else {
+      toast("All Field should be filled");
+    }
   };
   //delete skill data
   const handleRemoveSkill = (index) => {
-    console.log("btn clicked", index);
-    const updateSkillDetail = skillDetail.filter((item) => item.id !== index);
-    setSkillDetails(updateSkillDetail);
+    if (window.confirm("Are you sure you want to delete this entry ?")) {
+      console.log("btn clicked", index);
+      const updateSkillDetail = skillDetail.filter((item) => item.id !== index);
+      setSkillDetails(updateSkillDetail);
+      toast("Entry Deleted");
+    } else {
+      toast("Operation Cancel");
+    }
   };
   //add social Profile data-------------------------------------------------------------------------------------------
   const addSocialProfileInfo = (data) => {
@@ -837,15 +980,22 @@ function EditCv() {
       platformLink: data.platformLink,
       id: data.id,
     };
-    console.log(e);
-    setSocialProfileDetails((socialProfileDetail) => [
-      ...socialProfileDetail,
-      e,
-    ]);
-    setSocial({ ...social, isPlatformArrayEmpty: false });
-    platformNameRef.current.value = "";
-    platformLinkRef.current.value = "";
-    setSocial({ ...social, platformName: "", platformLink: "", id: "" });
+    if (e.platformName !== "" && e.platformLink !== "")
+      if (socialError.platformName === "" && socialError.platformLink === "") {
+        setSocialProfileDetails((socialProfileDetail) => [
+          ...socialProfileDetail,
+          e,
+        ]);
+        setSocial({ ...social, isPlatformArrayEmpty: false });
+        platformNameRef.current.value = "";
+        platformLinkRef.current.value = "";
+        setSocial({ ...social, platformName: "", platformLink: "", id: "" });
+      } else {
+        toast("Validation Error");
+      }
+    else {
+      toast("All Field should be filled");
+    }
   };
   //edit social Profile data
   const handleEditSocialProfile = (data) => {
@@ -860,19 +1010,32 @@ function EditCv() {
       (element) => element.id === data.id
     );
     let updateSData = socialProfileDetail;
-    updateSData[index] = data;
-    platformNameRef.current.value = "";
-    platformLinkRef.current.value = "";
-    setSocial({ ...social, platformName: "", platformLink: "", id: "" });
-    setUpdateButton(false);
+    if (data.platformName !== "" && data.platformLink !== "")
+      if (socialError.platformName === "" && socialError.platformLink === "") {
+        updateSData[index] = data;
+        platformNameRef.current.value = "";
+        platformLinkRef.current.value = "";
+        setSocial({ ...social, platformName: "", platformLink: "", id: "" });
+        setUpdateButton(false);
+      } else {
+        toast("Validation Error");
+      }
+    else {
+      toast("All Field should be filled");
+    }
   };
   //delete social Profile data
   const handleRemoveSocialProfile = (index) => {
-    console.log("btn clicked", index);
-    const updateSocialProfileDetail = socialProfileDetail.filter(
-      (item) => item.id !== index
-    );
-    setSocialProfileDetails(updateSocialProfileDetail);
+    if (window.confirm("Are you sure you want to delete this entry ?")) {
+      console.log("btn clicked", index);
+      const updateSocialProfileDetail = socialProfileDetail.filter(
+        (item) => item.id !== index
+      );
+      setSocialProfileDetails(updateSocialProfileDetail);
+      toast("Entry Deleted");
+    } else {
+      toast("Operation Cancel");
+    }
   };
 
   function getStepContent(step) {

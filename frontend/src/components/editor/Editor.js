@@ -18,19 +18,21 @@ import { toast } from "react-toastify";
 const RegForEmail = RegExp("^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+.com$");
 const RegForName = RegExp("^[a-zA-Z]{3,10}$");
 const RegForPhone = RegExp("^[7-9][0-9]{9}$");
-const RegForAddress = RegExp("^[a-zA-Z]{3,10}$");
 const RegForCity = RegExp("^[a-zA-Z]{3,10}$");
 const RegForState = RegExp("^[a-zA-Z]{3,15}$");
 const RegForPincode = RegExp("^[0-9]{6}$");
 //regex for education
-const RegForDegreeName = RegExp("^[a-zA-Z]{3,10}$");
-const RegForInstituteName = RegExp("^[a-zA-Z]{3,10}$");
-const RegForDegreePercentage = RegExp("^[1-9]{2}");
+const RegForDegreeName = RegExp("^[a-zA-Z]{3,25}$");
+const RegForInstituteName = RegExp("^[a-zA-Z]{3,30}$");
+const RegForDegreePercentage = RegExp("^[0-9]{1,2}$");
 
 function Editor() {
   const [uid, setUid] = useState(null);
+  const [check, setCheck] = useState(false);
+  const toggleChecked = () => setCheck((check) => !check);
+  console.log(check);
   //state variable for stepper
-  const [activeStep, setActiveStep] = useState(0);
+  const [activeStep, setActiveStep] = useState(2);
   const steps = getSteps();
   const [update, setUpdateButton] = useState(false);
   const [download, setDownload] = useState(false);
@@ -109,6 +111,7 @@ function Editor() {
     leavingDate: "",
     technologiesWorkedOn: "",
   });
+  const [isExperience, setIsExperience] = useState(true);
   //start of experience ref
   const organizationNameRef = useRef(null);
   const joiningLocationRef = useRef(null);
@@ -210,7 +213,9 @@ function Editor() {
   }
 
   const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    if (window.confirm("Are you sure you want to proceed ?")) {
+      setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    }
   };
 
   const handleBack = () => {
@@ -234,7 +239,6 @@ function Editor() {
       basicInfoValues.pincode !== "" &&
       basicInfoValues.bio !== "" &&
       educationDetail.length > 0 &&
-      experienceDetail.length > 0 &&
       projectsDetail.length > 0 &&
       skillDetail.length > 0 &&
       socialProfileDetail.length > 0
@@ -312,9 +316,10 @@ function Editor() {
       case "address":
         setBasicInfoValuesErrors({
           ...basicInfoValuesErrors,
-          address: RegForAddress.test(addressRef.current.value)
-            ? ""
-            : "* Please input a correct Address.",
+          address:
+            addressRef.current.value.length > 7
+              ? ""
+              : "* Please input a correct Address.",
         });
         setBasicInfoValues({
           ...basicInfoValues,
@@ -595,21 +600,33 @@ function Editor() {
       percentage: data.percentage,
       id: data.id,
     };
-    setEducationDetail((educationDetail) => [...educationDetail, e]);
-    setEducationInfoValues({
-      ...educationInfoValues,
-      isEducationArrayEmpty: false,
-    });
-    degreeNameRef.current.value = "";
-    instituteNameRef.current.value = "";
-    percentageRef.current.value = "";
-    setEducationInfoValues({
-      ...educationInfoValues,
-      degree_name: "",
-      institute_name: "",
-      percentage: "",
-      id: "",
-    });
+    if (e.degree_name !== "" && e.institute_name !== "" && e.percentage !== "")
+      if (
+        educationInfoErrors.degree_name === "" &&
+        educationInfoErrors.institute_name === "" &&
+        educationInfoErrors.percentage === ""
+      ) {
+        setEducationDetail((educationDetail) => [...educationDetail, e]);
+        setEducationInfoValues({
+          ...educationInfoValues,
+          isEducationArrayEmpty: false,
+        });
+        degreeNameRef.current.value = "";
+        instituteNameRef.current.value = "";
+        percentageRef.current.value = "";
+        setEducationInfoValues({
+          ...educationInfoValues,
+          degree_name: "",
+          institute_name: "",
+          percentage: "",
+          id: "",
+        });
+      } else {
+        toast("Validation Error");
+      }
+    else {
+      toast("All Field should be filled");
+    }
   };
   //edit education data
   const handleEditEducation = (data) => {
@@ -624,28 +641,47 @@ function Editor() {
       (element) => element.id === data.id
     );
     let updateEData = educationDetail;
-    updateEData[index] = data;
-    degreeNameRef.current.value = "";
-    instituteNameRef.current.value = "";
-    percentageRef.current.value = "";
-    setEducationInfoValues({
-      ...educationInfoValues,
-      degree_name: "",
-      institute_name: "",
-      percentage: "",
-      id: "",
-    });
-    setUpdateButton(false);
-
-    // let newEdu = educationInfoValues.educationDetail
+    if (
+      data.degree_name !== "" &&
+      data.institute_name !== "" &&
+      data.percentage !== ""
+    ) {
+      if (
+        educationInfoErrors.degree_name === "" &&
+        educationInfoErrors.institute_name === "" &&
+        educationInfoErrors.percentage === ""
+      ) {
+        updateEData[index] = data;
+        degreeNameRef.current.value = "";
+        instituteNameRef.current.value = "";
+        percentageRef.current.value = "";
+        setEducationInfoValues({
+          ...educationInfoValues,
+          degree_name: "",
+          institute_name: "",
+          percentage: "",
+          id: "",
+        });
+        setUpdateButton(false);
+      } else {
+        toast("Validation Error");
+      }
+    } else {
+      toast("All field required");
+    }
   };
   //delete education data
   const handleRemoveEducation = (index) => {
-    console.log("btn clicked", index);
-    const updateEducationDetail = educationDetail.filter(
-      (item) => item.id !== index
-    );
-    setEducationDetail(updateEducationDetail);
+    if (window.confirm("Are you sure you want to delete this entry ?")) {
+      console.log("btn clicked", index);
+      const updateEducationDetail = educationDetail.filter(
+        (item) => item.id !== index
+      );
+      setEducationDetail(updateEducationDetail);
+      toast("Entry Deleted");
+    } else {
+      toast("Operation Cancel");
+    }
   };
   //add experience data-------------------------------------------------------------------------------------------
   const addExperienceInfo = (data) => {
@@ -662,26 +698,48 @@ function Editor() {
       id: data.id,
     };
     console.log(e);
-    setExperienceDetail((experienceDetail) => [...experienceDetail, e]);
-    setExperience({ ...experience, isExperienceArrayEmpty: false });
-    organizationNameRef.current.value = "";
-    joiningLocationRef.current.value = "";
-    positionRef.current.value = "";
-    ctcRef.current.value = "";
-    joiningDateRef.current.value = "";
-    leavingDateRef.current.value = "";
-    technologiesWorkedOnRef.current.value = "";
-    setExperience({
-      ...experience,
-      organizationName: "",
-      joiningLocation: "",
-      position: "",
-      ctc: "",
-      joiningDate: "",
-      leavingDate: "",
-      technologiesWorkedOn: "",
-      id: "",
-    });
+    if (
+      e.organizationName !== "" &&
+      e.joiningLocation !== "" &&
+      e.position !== "" &&
+      e.ctc !== "" &&
+      e.joiningDate !== "" &&
+      e.leavingDate !== "" &&
+      e.technologiesWorkedOn !== ""
+    )
+      if (
+        experienceError.organizationName === "" &&
+        experienceError.joiningLocation === "" &&
+        experienceError.position === "" &&
+        experienceError.ctc === "" &&
+        experienceError.technologiesWorkedOn === ""
+      ) {
+        setExperienceDetail((experienceDetail) => [...experienceDetail, e]);
+        setExperience({ ...experience, isExperienceArrayEmpty: false });
+        organizationNameRef.current.value = "";
+        joiningLocationRef.current.value = "";
+        positionRef.current.value = "";
+        ctcRef.current.value = "";
+        joiningDateRef.current.value = "";
+        leavingDateRef.current.value = "";
+        technologiesWorkedOnRef.current.value = "";
+        setExperience({
+          ...experience,
+          organizationName: "",
+          joiningLocation: "",
+          position: "",
+          ctc: "",
+          joiningDate: "",
+          leavingDate: "",
+          technologiesWorkedOn: "",
+          id: "",
+        });
+      } else {
+        toast("Validation Error");
+      }
+    else {
+      toast("All Field should be filled");
+    }
   };
   //edit experience data
   const handleEditExperience = (data) => {
@@ -696,34 +754,61 @@ function Editor() {
       (element) => element.id === data.id
     );
     let updateEData = experienceDetail;
-    updateEData[index] = data;
-    organizationNameRef.current.value = "";
-    joiningLocationRef.current.value = "";
-    positionRef.current.value = "";
-    ctcRef.current.value = "";
-    joiningDateRef.current.value = "";
-    leavingDateRef.current.value = "";
-    technologiesWorkedOnRef.current.value = "";
-    setExperience({
-      ...experience,
-      organizationName: "",
-      joiningLocation: "",
-      position: "",
-      ctc: "",
-      joiningDate: "",
-      leavingDate: "",
-      technologiesWorkedOn: "",
-      id: "",
-    });
-    setUpdateButton(false);
+    if (
+      data.organizationName !== "" &&
+      data.joiningLocation !== "" &&
+      data.position !== "" &&
+      data.ctc !== "" &&
+      data.joiningDate !== "" &&
+      data.leavingDate !== "" &&
+      data.technologiesWorkedOn !== ""
+    )
+      if (
+        experienceError.organizationName === "" &&
+        experienceError.joiningLocation === "" &&
+        experienceError.position === "" &&
+        experienceError.ctc === "" &&
+        experienceError.technologiesWorkedOn === ""
+      ) {
+        updateEData[index] = data;
+        organizationNameRef.current.value = "";
+        joiningLocationRef.current.value = "";
+        positionRef.current.value = "";
+        ctcRef.current.value = "";
+        joiningDateRef.current.value = "";
+        leavingDateRef.current.value = "";
+        technologiesWorkedOnRef.current.value = "";
+        setExperience({
+          ...experience,
+          organizationName: "",
+          joiningLocation: "",
+          position: "",
+          ctc: "",
+          joiningDate: "",
+          leavingDate: "",
+          technologiesWorkedOn: "",
+          id: "",
+        });
+        setUpdateButton(false);
+      } else {
+        toast("Validation Error");
+      }
+    else {
+      toast("All field required");
+    }
   };
   //delete experience data
   const handleRemoveExperience = (index) => {
-    console.log("btn clicked", index);
-    const updateExperienceDetail = experienceDetail.filter(
-      (item) => item.id !== index
-    );
-    setExperienceDetail(updateExperienceDetail);
+    if (window.confirm("Are you sure you want to delete this entry ?")) {
+      console.log("btn clicked", index);
+      const updateExperienceDetail = experienceDetail.filter(
+        (item) => item.id !== index
+      );
+      setExperienceDetail(updateExperienceDetail);
+      toast("Entry Deleted");
+    } else {
+      toast("Operation Cancel");
+    }
   };
   //add projects data-------------------------------------------------------------------------------------------
   const addProjectsInfo = (data) => {
@@ -737,75 +822,125 @@ function Editor() {
       descProj: data.descProj,
       id: data.id,
     };
-    console.log(e);
-    setProjectDetail((projectDetails) => [...projectDetails, e]);
-    setProject({ ...project, isProjectArrayEmpty: false });
-    projectTitleRef.current.value = "";
-    teamSizeRef.current.value = "";
-    durationRef.current.value = "";
-    techUsedRef.current.value = "";
-    descProjRef.current.value = "";
-    setProject({
-      ...project,
-      projectTitle: "",
-      teamSize: "",
-      duration: "",
-      techUsed: "",
-      descProj: "",
-      id: "",
-    });
+    if (
+      e.projectTitle !== "" &&
+      e.teamSize !== "" &&
+      e.duration !== "" &&
+      e.techUsed !== "" &&
+      e.descProj !== ""
+    )
+      if (
+        projectError.projectTitle === "" &&
+        projectError.teamSize === "" &&
+        projectError.duration === "" &&
+        projectError.techUsed === "" &&
+        projectError.descProj === ""
+      ) {
+        setProjectDetail((projectDetails) => [...projectDetails, e]);
+        setProject({ ...project, isProjectArrayEmpty: false });
+        projectTitleRef.current.value = "";
+        teamSizeRef.current.value = "";
+        durationRef.current.value = "";
+        techUsedRef.current.value = "";
+        descProjRef.current.value = "";
+        setProject({
+          ...project,
+          projectTitle: "",
+          teamSize: "",
+          duration: "",
+          techUsed: "",
+          descProj: "",
+          id: "",
+        });
+      } else {
+        toast("Validation Error");
+      }
+    else {
+      toast("All Field should be filled");
+    }
   };
-  //edit experience data
+  //edit projects data
   const handleEditProject = (data) => {
     console.log(data);
     setProject(data);
     setUpdateButton(true);
   };
-  //update experience data
+  //update projects data
   const updateProjectInfo = (data) => {
     console.log(data);
     const index = projectsDetail.findIndex((element) => element.id === data.id);
     let updatePData = projectsDetail;
-    updatePData[index] = data;
-    projectTitleRef.current.value = "";
-    teamSizeRef.current.value = "";
-    durationRef.current.value = "";
-    techUsedRef.current.value = "";
-    descProjRef.current.value = "";
-    setProject({
-      ...project,
-      projectTitle: "",
-      teamSize: "",
-      duration: "",
-      techUsed: "",
-      descProj: "",
-      id: "",
-    });
-    setUpdateButton(false);
+    if (
+      data.projectTitle !== "" &&
+      data.teamSize !== "" &&
+      data.duration !== "" &&
+      data.techUsed !== "" &&
+      data.descProj !== ""
+    )
+      if (
+        projectError.projectTitle === "" &&
+        projectError.teamSize === "" &&
+        projectError.duration === "" &&
+        projectError.techUsed === "" &&
+        projectError.descProj === ""
+      ) {
+        updatePData[index] = data;
+        projectTitleRef.current.value = "";
+        teamSizeRef.current.value = "";
+        durationRef.current.value = "";
+        techUsedRef.current.value = "";
+        descProjRef.current.value = "";
+        setProject({
+          ...project,
+          projectTitle: "",
+          teamSize: "",
+          duration: "",
+          techUsed: "",
+          descProj: "",
+          id: "",
+        });
+        setUpdateButton(false);
+      } else {
+        toast("Validation Error");
+      }
+    else {
+      toast("All Field should be filled");
+    }
   };
-  //delete experience data
+  //delete projects data
   const handleRemoveProject = (index) => {
-    console.log("btn clicked", index);
-    const updateProjectDetail = projectsDetail.filter(
-      (item) => item.id !== index
-    );
-    setProjectDetail(updateProjectDetail);
+    if (window.confirm("Are you sure you want to delete this entry ?")) {
+      console.log("btn clicked", index);
+      const updateProjectDetail = projectsDetail.filter(
+        (item) => item.id !== index
+      );
+      setProjectDetail(updateProjectDetail);
+      toast("Entry Deleted");
+    } else {
+      toast("Operation Cancel");
+    }
   };
   //add skill data-------------------------------------------------------------------------------------------
   const addSkillInfo = (data) => {
-    console.log(data);
     data.id = Math.random();
     let e = {
       skillName: data.skillName,
       perfection: data.perfection,
       id: data.id,
     };
-    console.log(e);
-    setSkillDetails((skillDetail) => [...skillDetail, e]);
-    setSkill({ ...skill, isSkillArrayEmpty: false });
-    skillNameRef.current.value = "";
-    perfectionRef.current.value = "";
-    setSkill({ ...skill, skillName: "", perfection: "", id: "" });
+    if (e.skillName !== "" && e.perfection !== "")
+      if (skillError.skillName === "" && skillError.perfection === "") {
+        setSkillDetails((skillDetail) => [...skillDetail, e]);
+        setSkill({ ...skill, isSkillArrayEmpty: false });
+        skillNameRef.current.value = "";
+        perfectionRef.current.value = "";
+        setSkill({ ...skill, skillName: "", perfection: "", id: "" });
+      } else {
+        toast("Validation Error");
+      }
+    else {
+      toast("All Field should be filled");
+    }
   };
   //edit skill data
   const handleEditSkill = (data) => {
@@ -818,17 +953,30 @@ function Editor() {
     console.log(data);
     const index = skillDetail.findIndex((element) => element.id === data.id);
     let updateSData = skillDetail;
-    updateSData[index] = data;
-    skillNameRef.current.value = "";
-    perfectionRef.current.value = "";
-    setSkill({ ...skill, skillName: "", perfection: "", id: "" });
-    setUpdateButton(false);
+    if (data.skillName !== "" && data.perfection !== "")
+      if (skillError.skillName === "" && skillError.perfection === "") {
+        updateSData[index] = data;
+        skillNameRef.current.value = "";
+        perfectionRef.current.value = "";
+        setSkill({ ...skill, skillName: "", perfection: "", id: "" });
+        setUpdateButton(false);
+      } else {
+        toast("Validation Error");
+      }
+    else {
+      toast("All Field should be filled");
+    }
   };
   //delete skill data
   const handleRemoveSkill = (index) => {
-    console.log("btn clicked", index);
-    const updateSkillDetail = skillDetail.filter((item) => item.id !== index);
-    setSkillDetails(updateSkillDetail);
+    if (window.confirm("Are you sure you want to delete this entry ?")) {
+      console.log("btn clicked", index);
+      const updateSkillDetail = skillDetail.filter((item) => item.id !== index);
+      setSkillDetails(updateSkillDetail);
+      toast("Entry Deleted");
+    } else {
+      toast("Operation Cancel");
+    }
   };
   //add social Profile data-------------------------------------------------------------------------------------------
   const addSocialProfileInfo = (data) => {
@@ -839,15 +987,22 @@ function Editor() {
       platformLink: data.platformLink,
       id: data.id,
     };
-    console.log(e);
-    setSocialProfileDetails((socialProfileDetail) => [
-      ...socialProfileDetail,
-      e,
-    ]);
-    setSocial({ ...social, isPlatformArrayEmpty: false });
-    platformNameRef.current.value = "";
-    platformLinkRef.current.value = "";
-    setSocial({ ...social, platformName: "", platformLink: "", id: "" });
+    if (e.platformName !== "" && e.platformLink !== "")
+      if (socialError.platformName === "" && socialError.platformLink === "") {
+        setSocialProfileDetails((socialProfileDetail) => [
+          ...socialProfileDetail,
+          e,
+        ]);
+        setSocial({ ...social, isPlatformArrayEmpty: false });
+        platformNameRef.current.value = "";
+        platformLinkRef.current.value = "";
+        setSocial({ ...social, platformName: "", platformLink: "", id: "" });
+      } else {
+        toast("Validation Error");
+      }
+    else {
+      toast("All Field should be filled");
+    }
   };
   //edit social Profile data
   const handleEditSocialProfile = (data) => {
@@ -862,19 +1017,32 @@ function Editor() {
       (element) => element.id === data.id
     );
     let updateSData = socialProfileDetail;
-    updateSData[index] = data;
-    platformNameRef.current.value = "";
-    platformLinkRef.current.value = "";
-    setSocial({ ...social, platformName: "", platformLink: "", id: "" });
-    setUpdateButton(false);
+    if (data.platformName !== "" && data.platformLink !== "")
+      if (socialError.platformName === "" && socialError.platformLink === "") {
+        updateSData[index] = data;
+        platformNameRef.current.value = "";
+        platformLinkRef.current.value = "";
+        setSocial({ ...social, platformName: "", platformLink: "", id: "" });
+        setUpdateButton(false);
+      } else {
+        toast("Validation Error");
+      }
+    else {
+      toast("All Field should be filled");
+    }
   };
   //delete social Profile data
   const handleRemoveSocialProfile = (index) => {
-    console.log("btn clicked", index);
-    const updateSocialProfileDetail = socialProfileDetail.filter(
-      (item) => item.id !== index
-    );
-    setSocialProfileDetails(updateSocialProfileDetail);
+    if (window.confirm("Are you sure you want to delete this entry ?")) {
+      console.log("btn clicked", index);
+      const updateSocialProfileDetail = socialProfileDetail.filter(
+        (item) => item.id !== index
+      );
+      setSocialProfileDetails(updateSocialProfileDetail);
+      toast("Entry Deleted");
+    } else {
+      toast("Operation Cancel");
+    }
   };
 
   function getStepContent(step) {
@@ -882,10 +1050,13 @@ function Editor() {
       case 0:
         return (
           <Container>
+            <p className="text-danger">
+              Please fill out the form first. (* mark as required fields).
+            </p>
             <Form className="basic_form">
               <Row className="mb-3">
                 <Form.Group as={Col} controlId="formGridFname">
-                  <Form.Label>First Name</Form.Label>
+                  <Form.Label>First Name * </Form.Label>
                   <Form.Control
                     type="text"
                     placeholder="Enter First Name"
@@ -902,7 +1073,7 @@ function Editor() {
                   </Form.Control.Feedback>
                 </Form.Group>
                 <Form.Group as={Col} controlId="formGridLname">
-                  <Form.Label>Last Name</Form.Label>
+                  <Form.Label>Last Name * </Form.Label>
                   <Form.Control
                     type="text"
                     placeholder="Enter Last Name"
@@ -921,7 +1092,7 @@ function Editor() {
               </Row>
               <Row className="mb-3">
                 <Form.Group as={Col} controlId="formGridEmail">
-                  <Form.Label>Email</Form.Label>
+                  <Form.Label>Email * </Form.Label>
                   <Form.Control
                     type="email"
                     placeholder="Enter email"
@@ -939,7 +1110,7 @@ function Editor() {
                 </Form.Group>
               </Row>
               <Form.Group className="mb-3" controlId="formGridPhone">
-                <Form.Label>Phone</Form.Label>
+                <Form.Label>Phone * </Form.Label>
                 <Form.Control
                   type="number"
                   placeholder="+91 1234567890"
@@ -954,7 +1125,7 @@ function Editor() {
                 </Form.Control.Feedback>
               </Form.Group>
               <Form.Group className="mb-3" controlId="formGridAddress">
-                <Form.Label>Address</Form.Label>
+                <Form.Label>Address * </Form.Label>
                 <Form.Control
                   placeholder="Apartment, studio, or floor"
                   name="address"
@@ -971,7 +1142,7 @@ function Editor() {
               </Form.Group>
               <Row className="mb-3">
                 <Form.Group as={Col} controlId="formGridCity">
-                  <Form.Label>City</Form.Label>
+                  <Form.Label>City * </Form.Label>
                   <Form.Control
                     placeholder="Enter City Name"
                     name="city"
@@ -985,7 +1156,7 @@ function Editor() {
                   </Form.Control.Feedback>
                 </Form.Group>
                 <Form.Group as={Col} controlId="formGridState">
-                  <Form.Label>State</Form.Label>
+                  <Form.Label>State * </Form.Label>
                   <Form.Control
                     placeholder="Enter State Name"
                     name="state"
@@ -1001,7 +1172,7 @@ function Editor() {
                   </Form.Control.Feedback>
                 </Form.Group>
                 <Form.Group as={Col} controlId="formGridZip">
-                  <Form.Label>Pincode</Form.Label>
+                  <Form.Label>Pincode * </Form.Label>
                   <Form.Control
                     placeholder="Enter Pincode"
                     name="pincode"
@@ -1019,7 +1190,7 @@ function Editor() {
               </Row>
               <Row className="mb-3">
                 <Form.Group className="mb-3" controlId="exampleForm.Bio">
-                  <Form.Label>Bio</Form.Label>
+                  <Form.Label>Bio * </Form.Label>
                   <Form.Control
                     as="textarea"
                     rows={3}
@@ -1145,7 +1316,7 @@ function Editor() {
                   </thead>
                   <tbody>
                     {educationDetail.map((data, i) => (
-                      <tr key={i}>
+                      <tr key={data.id}>
                         <td>{data.degree_name}</td>
                         <td>{data.institute_name}</td>
                         <td>{data.percentage}</td>
@@ -1183,167 +1354,193 @@ function Editor() {
       case 2:
         return (
           <Container>
-            <Form className="basic_form">
-              <Row className="mb-3">
-                <Form.Group as={Col} controlId="formGridOrganizationName">
-                  <Form.Label>Organization Name</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="Enter Organization Name"
-                    name="organizationName"
-                    value={experience.organizationName}
-                    ref={organizationNameRef}
-                    isValid={experience.organizationName !== "" ? true : false}
-                    isInvalid={
-                      experienceError.organizationName !== "" ? true : false
-                    }
-                    onChange={(e) => handler(e)}
-                  ></Form.Control>
-                  <Form.Control.Feedback type="invalid">
-                    {experienceError.organizationName}
-                  </Form.Control.Feedback>
-                </Form.Group>
-                <Form.Group as={Col} controlId="formGridJoiningLocation">
-                  <Form.Label>Joining Location</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="Enter Joining Location"
-                    name="joiningLocation"
-                    value={experience.joiningLocation}
-                    ref={joiningLocationRef}
-                    isValid={experience.joiningLocation !== "" ? true : false}
-                    isInvalid={
-                      experienceError.joiningLocation !== "" ? true : false
-                    }
-                    onChange={(e) => handler(e)}
-                  ></Form.Control>
-                  <Form.Control.Feedback type="invalid">
-                    {experienceError.joiningLocation}
-                  </Form.Control.Feedback>
-                </Form.Group>
-              </Row>
-              <Form.Group as={Col} controlId="formGridPosition">
-                <Form.Label>Position</Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="Enter Position"
-                  name="position"
-                  value={experience.position}
-                  ref={positionRef}
-                  isValid={experience.position !== "" ? true : false}
-                  isInvalid={experienceError.position !== "" ? true : false}
-                  onChange={(e) => handler(e)}
-                ></Form.Control>
-                <Form.Control.Feedback type="invalid">
-                  {experienceError.position}
-                </Form.Control.Feedback>
-              </Form.Group>
-              <Form.Group className="mb-3" controlId="formGridCTC">
-                <Form.Label>CTC</Form.Label>
-                <Form.Control
-                  type="number"
-                  placeholder="Enter CTC"
-                  name="ctc"
-                  value={experience.ctc}
-                  ref={ctcRef}
-                  isValid={experience.ctc !== "" ? true : false}
-                  isInvalid={experienceError.ctc !== "" ? true : false}
-                  onChange={(e) => handler(e)}
-                ></Form.Control>
-                <Form.Control.Feedback type="invalid">
-                  {experienceError.ctc}
-                </Form.Control.Feedback>
-              </Form.Group>
-              <Row className="mb-3">
-                <Form.Group as={Col} controlId="formGridJoiningDate">
-                  <Form.Label>Joining Date</Form.Label>
-                  <Form.Control
-                    type="date"
-                    placeholder="Enter Joining Date"
-                    name="joiningDate"
-                    value={experience.joiningDate}
-                    ref={joiningDateRef}
-                    isValid={experience.joiningDate !== "" ? true : false}
-                    isInvalid={
-                      experienceError.joiningDate !== "" ? true : false
-                    }
-                    onChange={(e) => handler(e)}
-                  ></Form.Control>
-                  <Form.Control.Feedback type="invalid">
-                    {experienceError.joiningDate}
-                  </Form.Control.Feedback>
-                </Form.Group>
-                <Form.Group as={Col} controlId="formGridLeavingDate">
-                  <Form.Label>Leaving Date</Form.Label>
-                  <Form.Control
-                    type="date"
-                    placeholder="Enter Leaving Date"
-                    name="leavingDate"
-                    value={experience.leavingDate}
-                    ref={leavingDateRef}
-                    isValid={experience.leavingDate !== "" ? true : false}
-                    isInvalid={
-                      experienceError.leavingDate !== "" ? true : false
-                    }
-                    onChange={(e) => handler(e)}
-                  ></Form.Control>
-                  <Form.Control.Feedback type="invalid">
-                    {experienceError.leavingDate}
-                  </Form.Control.Feedback>
-                </Form.Group>
-              </Row>
-              <Row className="mb-3">
-                <Form.Group
-                  className="mb-3"
-                  controlId="exampleForm.ControlTextarea1"
-                >
-                  <Form.Label>Technologies worked on</Form.Label>
-                  <Form.Control
-                    as="textarea"
-                    rows={3}
-                    placeholder="List of Technologies Worked on"
-                    name="technologiesWorkedOn"
-                    value={experience.technologiesWorkedOn}
-                    ref={technologiesWorkedOnRef}
-                    isValid={
-                      experience.technologiesWorkedOn !== "" ? true : false
-                    }
-                    isInvalid={
-                      experienceError.technologiesWorkedOn !== "" ? true : false
-                    }
-                    onChange={(e) => handler(e)}
-                  ></Form.Control>
-                  <Form.Control.Feedback type="invalid">
-                    {experienceError.technologiesWorkedOn}
-                  </Form.Control.Feedback>
-                </Form.Group>
-              </Row>
-            </Form>
-            {update ? (
+            <div className="mt-3">
+              <h5>Do you have Experience?</h5>
+              <label className="switch" htmlFor="checkbox">
+                <input
+                  type="checkbox"
+                  id="checkbox"
+                  checked={check}
+                  onChange={toggleChecked}
+                />
+
+                <div className="slider round"></div>
+              </label>
+            </div>
+            {check ? (
               <>
-                <div className="text-center">
-                  <Button
-                    onClick={() => updateExperienceInfo(experience)}
-                    variant="contained"
-                    color="info"
-                  >
-                    Update
-                  </Button>
-                </div>
+                <Form className="basic_form">
+                  <Row className="mb-3">
+                    <Form.Group as={Col} controlId="formGridOrganizationName">
+                      <Form.Label>Organization Name</Form.Label>
+                      <Form.Control
+                        type="text"
+                        placeholder="Enter Organization Name"
+                        name="organizationName"
+                        value={experience.organizationName}
+                        ref={organizationNameRef}
+                        isValid={
+                          experience.organizationName !== "" ? true : false
+                        }
+                        isInvalid={
+                          experienceError.organizationName !== "" ? true : false
+                        }
+                        onChange={(e) => handler(e)}
+                      ></Form.Control>
+                      <Form.Control.Feedback type="invalid">
+                        {experienceError.organizationName}
+                      </Form.Control.Feedback>
+                    </Form.Group>
+                    <Form.Group as={Col} controlId="formGridJoiningLocation">
+                      <Form.Label>Joining Location</Form.Label>
+                      <Form.Control
+                        type="text"
+                        placeholder="Enter Joining Location"
+                        name="joiningLocation"
+                        value={experience.joiningLocation}
+                        ref={joiningLocationRef}
+                        isValid={
+                          experience.joiningLocation !== "" ? true : false
+                        }
+                        isInvalid={
+                          experienceError.joiningLocation !== "" ? true : false
+                        }
+                        onChange={(e) => handler(e)}
+                      ></Form.Control>
+                      <Form.Control.Feedback type="invalid">
+                        {experienceError.joiningLocation}
+                      </Form.Control.Feedback>
+                    </Form.Group>
+                  </Row>
+                  <Form.Group as={Col} controlId="formGridPosition">
+                    <Form.Label>Position</Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder="Enter Position"
+                      name="position"
+                      value={experience.position}
+                      ref={positionRef}
+                      isValid={experience.position !== "" ? true : false}
+                      isInvalid={experienceError.position !== "" ? true : false}
+                      onChange={(e) => handler(e)}
+                    ></Form.Control>
+                    <Form.Control.Feedback type="invalid">
+                      {experienceError.position}
+                    </Form.Control.Feedback>
+                  </Form.Group>
+                  <Form.Group className="mb-3" controlId="formGridCTC">
+                    <Form.Label>CTC</Form.Label>
+                    <Form.Control
+                      type="number"
+                      placeholder="Enter CTC"
+                      name="ctc"
+                      value={experience.ctc}
+                      ref={ctcRef}
+                      isValid={experience.ctc !== "" ? true : false}
+                      isInvalid={experienceError.ctc !== "" ? true : false}
+                      onChange={(e) => handler(e)}
+                    ></Form.Control>
+                    <Form.Control.Feedback type="invalid">
+                      {experienceError.ctc}
+                    </Form.Control.Feedback>
+                  </Form.Group>
+                  <Row className="mb-3">
+                    <Form.Group as={Col} controlId="formGridJoiningDate">
+                      <Form.Label>Joining Date</Form.Label>
+                      <Form.Control
+                        type="date"
+                        placeholder="Enter Joining Date"
+                        name="joiningDate"
+                        value={experience.joiningDate}
+                        ref={joiningDateRef}
+                        isValid={experience.joiningDate !== "" ? true : false}
+                        isInvalid={
+                          experienceError.joiningDate !== "" ? true : false
+                        }
+                        onChange={(e) => handler(e)}
+                      ></Form.Control>
+                      <Form.Control.Feedback type="invalid">
+                        {experienceError.joiningDate}
+                      </Form.Control.Feedback>
+                    </Form.Group>
+                    <Form.Group as={Col} controlId="formGridLeavingDate">
+                      <Form.Label>Leaving Date</Form.Label>
+                      <Form.Control
+                        type="date"
+                        placeholder="Enter Leaving Date"
+                        name="leavingDate"
+                        value={experience.leavingDate}
+                        ref={leavingDateRef}
+                        isValid={experience.leavingDate !== "" ? true : false}
+                        isInvalid={
+                          experienceError.leavingDate !== "" ? true : false
+                        }
+                        onChange={(e) => handler(e)}
+                      ></Form.Control>
+                      <Form.Control.Feedback type="invalid">
+                        {experienceError.leavingDate}
+                      </Form.Control.Feedback>
+                    </Form.Group>
+                  </Row>
+                  <Row className="mb-3">
+                    <Form.Group
+                      className="mb-3"
+                      controlId="exampleForm.ControlTextarea1"
+                    >
+                      <Form.Label>Technologies worked on</Form.Label>
+                      <Form.Control
+                        as="textarea"
+                        rows={3}
+                        placeholder="List of Technologies Worked on"
+                        name="technologiesWorkedOn"
+                        value={experience.technologiesWorkedOn}
+                        ref={technologiesWorkedOnRef}
+                        isValid={
+                          experience.technologiesWorkedOn !== "" ? true : false
+                        }
+                        isInvalid={
+                          experienceError.technologiesWorkedOn !== ""
+                            ? true
+                            : false
+                        }
+                        onChange={(e) => handler(e)}
+                      ></Form.Control>
+                      <Form.Control.Feedback type="invalid">
+                        {experienceError.technologiesWorkedOn}
+                      </Form.Control.Feedback>
+                    </Form.Group>
+                  </Row>
+                </Form>
+                {update ? (
+                  <>
+                    <div className="text-center">
+                      <Button
+                        onClick={() => updateExperienceInfo(experience)}
+                        variant="contained"
+                        color="info"
+                      >
+                        Update
+                      </Button>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="text-center">
+                      <Button
+                        onClick={() => addExperienceInfo(experience)}
+                        variant="contained"
+                        color="success"
+                      >
+                        Add
+                      </Button>
+                    </div>
+                  </>
+                )}
               </>
             ) : (
-              <>
-                <div className="text-center">
-                  <Button
-                    onClick={() => addExperienceInfo(experience)}
-                    variant="contained"
-                    color="success"
-                  >
-                    Add
-                  </Button>
-                </div>
-              </>
+              <></>
             )}
+
             <br />
             {experienceDetail.length > 0 ? (
               <>
@@ -1862,6 +2059,7 @@ function Editor() {
                 skill: skillDetail,
                 socialProfile: socialProfileDetail,
                 download: download,
+                check: check,
               }}
             />
           </Col>

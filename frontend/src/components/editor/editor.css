@@ -1,29 +1,29 @@
-.editor_row_section{
-    padding: 0%;
-    margin-top: 2%;
-    margin-bottom: 2%;
-    margin-left: 1%;
-    margin-right: 1%;
+.editor_row_section {
+  padding: 0%;
+  margin-top: 2%;
+  margin-bottom: 2%;
+  margin-left: 1%;
+  margin-right: 1%;
 }
-.editor_col_section{
-    padding: 0%;
+.editor_col_section {
+  padding: 0%;
 }
-.basic_form{
-    margin-top: 5%;
-    margin-bottom: 5%;
+.basic_form {
+  margin-top: 5%;
+  margin-bottom: 5%;
 }
-.prev_nxt_btn{
-    display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
+.prev_nxt_btn {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
 }
 
-.bio{
-    margin-top: 5px;
-    text-align: justify;
+.bio {
+  margin-top: 5px;
+  text-align: justify;
 }
-.cv-view-col{
-    margin-top: 1%;
+.cv-view-col {
+  margin-top: 1%;
 }
 /* .cv_View{
     cursor: pointer;
@@ -32,44 +32,174 @@
     padding: 2%;
     border: 1px solid black;
 } */
-.pro_pic{
-    height: 100px;
-    width: 100px;
-    border-radius: 30px;
-    border: 1px solid lightcyan;
-    margin-top: 5px;
+.pro_pic {
+  height: 100px;
+  width: auto;
+  border-radius: 30px;
+  border: 1px solid lightcyan;
+  margin-top: 5px;
 }
-.left-col{
-    background-color:darkblue;
-    flex-grow: 1;
+.left-col {
+  background-color: darkblue;
+  flex-grow: 1;
 }
-.right-col{
-    background-color: darksalmon;
+.right-col {
+  background-color: darksalmon;
 }
-.pro-contact{
-    color:azure;
-    background-color: black;
+.pro-contact {
+  color: azure;
+  background-color: black;
 }
-.pro-heading{
-    color: azure;
+.pro-heading {
+  color: azure;
 }
-.pro-skills{
-    color:azure;
-    background-color: black;
+.pro-skills {
+  color: azure;
+  background-color: black;
 }
-.model_pointer{
-    cursor: pointer;
-    font-size: medium;
+.model_pointer {
+  cursor: pointer;
+  font-size: medium;
 }
-.skill_list{
-    display: inline-block;
+.skill_list {
+  display: inline-block;
 }
-progress{
-    background-color:pink;
-    border-radius: 4px;
-    position: absolute;
-    box-shadow: 0 3px 6px rgba(255, 255, 0, 255) inset;
+progress {
+  background-color: pink;
+  border-radius: 4px;
+  position: absolute;
+  box-shadow: 0 3px 6px rgba(255, 255, 0, 255) inset;
 }
-.w-wrap{
+.w-wrap {
+  word-break: break-all;
+}
+
+/* top image div inside layout  */
+
+.outerDiv {
+  height: 180px;
+  width: auto;
+}
+
+.leftDiv {
+  color: #000;
+  margin: 20px;
+  float: left;
+}
+.rightDiv {
+  color: #000;
+  margin: 20px;
+  text-align: right;
+  float: right;
+  word-break: break-all;
+}
+
+/* .eduTable thead,
+th,
+td {
+  color: orange;
+} */
+
+/*  */
+.containerIntro h6,
+.containerIntro p {
+  display: inline;
+  vertical-align: top;
+  line-height: 28px;
+  word-break: break-all;
+  height: auto;
+}
+
+@media screen and (max-width: 767px) {
+  .outerDiv {
+    height: 330px;
+  }
+  .leftDiv {
+    color: #000;
+    margin: 10px;
+    float: left;
+    height: auto;
+    width: auto;
+  }
+  .rightDiv {
+    color: #000;
+    margin: 10px;
+    width: auto;
+    float: right;
     word-break: break-all;
+  }
 }
+@media screen and (max-width: 425px) {
+  .outerDiv {
+    height: 200px;
+  }
+  .leftDiv {
+    color: #000;
+    margin: 10px;
+    float: left;
+    height: auto;
+    width: auto;
+  }
+  .rightDiv {
+    color: #000;
+    margin: 10px;
+    width: auto;
+    float: right;
+    word-break: break-all;
+  }
+}
+
+/* start of check box css */
+.switch {
+  display: inline-block;
+  height: 34px;
+  position: relative;
+  width: 60px;
+  margin-top: 10px;
+  margin-left: 20px;
+  margin-bottom: 10px;
+}
+
+.switch input {
+  display: none;
+}
+
+.slider {
+  background-color: #ccc;
+  bottom: 0;
+  cursor: pointer;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  transition: 0.4s;
+}
+
+.slider:before {
+  background-color: #fff;
+  bottom: 4px;
+  content: "";
+  height: 26px;
+  left: 4px;
+  position: absolute;
+  transition: 0.4s;
+  width: 26px;
+}
+
+input:checked + .slider {
+  background-color: #66bb6a;
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
+
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+/*  end of check box css */
